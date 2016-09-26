@@ -142,8 +142,8 @@ class TuringMachine:
 
 		overwrite = self.live
 
-		string = ''.join(self.tape)
-		out = string if not show_pointer else string[:self.head] + '|' + string[self.head:]
+		tape_string = ''.join(self.tape)
+		out = tape_string if not show_pointer else tape_string[:self.head] + '|' + tape_string[self.head:]
 
 		end = '\r' if overwrite else '\n'
 
