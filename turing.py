@@ -124,7 +124,7 @@ class TuringMachine:
 			if self.live:
 				print()
 
-			print()
+			print('')
 
 			self.print_stepc()
 			self.print_head_moves()
