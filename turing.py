@@ -44,6 +44,11 @@ class TuringMachine:
 		self.rules = rules
 
 	def reset(self):
+		"""
+		Resets the state of the Turing machine to the
+		start.
+		"""
+
 		# Reset state variables
 
 		self.state = 1
@@ -59,6 +64,11 @@ class TuringMachine:
 		self.print_state()
 
 	def find_rule(self, state, scan):
+		"""
+		Given a state and scan, attempts to find a matching
+		rule according to this Turing machine.
+		"""
+
 		for r in self.rules:
 			if int(r[0]) == state and (str(r[1]) == scan or str(r[1]) == '*'):
 				return r
@@ -66,11 +76,19 @@ class TuringMachine:
 		raise RuleNotFound(state, scan)
 
 	def input(self, input):
+		"""
+		Feeds input tape to the Turing machine.
+		"""
+
 		self.tape = list(input)
 
 		self.reset()
 
 	def step(self):
+		"""
+		Progresses the Turing machine state.
+		"""
+
 		self.stepc += 1
 
 		# Add empty spaces to array when
@@ -109,6 +127,11 @@ class TuringMachine:
 		self.step_print()
 
 	def run(self):
+		"""
+		Automatically progresses the Turing machine state
+		every `step_time` seconds until program halt.
+		"""
+
 		while self.state != 0:
 			self.step()
 
@@ -120,6 +143,10 @@ class TuringMachine:
 	# Print functions
 
 	def step_print(self):
+		"""
+		Prints info about the current step.
+		"""
+
 		if self.state == 0:
 			self.print_state(False, True)
 
@@ -137,6 +164,10 @@ class TuringMachine:
 			self.print_state(True)
 
 	def print_state(self, show_pointer = False, silent_override = False):
+		"""
+		Prints info about the current state.
+		"""
+
 		if self.silent and not silent_override:
 			return False
 
@@ -157,15 +188,33 @@ class TuringMachine:
 		stdout.write(formatstr.format(rule = self.rule, end = end, stepc = self.stepc, state = self.state, out=out))
 
 	def print_stepc(self):
+		"""
+		Prints the step count so far.
+		"""
+
 		stdout.write("Steps: {stepc}\n".format(stepc=self.stepc))
 
 	def print_head_moves(self):
+		"""
+		Prints the number of head moves so far.
+		"""
+
 		stdout.write("Head moves: {moves}\n".format(moves=self.head_moves))
 
 	def print_path(self):
+		"""
+		Prints the state path so far.
+		"""
+
 		stdout.write("State path: {path}\n".format(path=self.path))
 
-def read_rules(file):
+def _read_rules(file):
+	"""
+	Given an open file `file`, reads rules
+	into 5-tuples separated by some
+	non-word-character delineator.
+	"""
+
 	rules = []
 
 	tup_buf = []
@@ -185,7 +234,11 @@ def read_rules(file):
 
 	return rules
 
-def parse_args():
+def _parse_args():
+	"""
+	Parses args when run as __main__.
+	"""
+
 	parser = ArgumentParser(description='Simulates the action of a Turing Machine.')
 
 	parser.add_argument('path', help="Path of a file containing rule quintuples.")
@@ -203,11 +256,17 @@ def parse_args():
 	return parser.parse_args()
 
 if __name__ == "__main__":
-	argv = vars(parse_args())
+	# Parse
+
+	argv = vars(_parse_args())
+
+	# Load
 
 	with open(argv['path'], 'r') as f:
-		rules = read_rules(f)
+		rules = _read_rules(f)
 		turing = TuringMachine(rules)
+
+	# Configure
 
 	turing.display_rules = argv['rules']
 	turing.step_time = argv['step_time'] if not argv['fast'] else 0
@@ -215,13 +274,20 @@ if __name__ == "__main__":
 	turing.silent = argv['silent']
 	turing.live = argv['live']
 
+	# Input
+
 	turing.input(argv['input'])
+
+	# Execute
 
 	if argv['stepping_mode'] and not argv['silent']:
 		while 1:
 			turing.step()
+			
 			if turing.state != 0:
 				x = keypress()
+
+				# Interrupt on Ctrl+C
 
 				if ord(x) == 3:
 					raise KeyboardInterrupt
