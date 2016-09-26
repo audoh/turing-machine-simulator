@@ -7,7 +7,7 @@ A simple half-tape Turing machine simulator written in Python.
 - The halt state is always 0.
 - Head direction is an integer where -1 moves left, 0 does nothing and 1 moves right.
 
-A sample palindrome detector program is provided. Its minifed version is also provided to demonstrate that delineators aren't necessary for the program's functioning.
+A sample palindrome detector program is provided.
 
 ## Features
 - Choose from either continuous run or stepping
