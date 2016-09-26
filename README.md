@@ -1,7 +1,7 @@
 # Turing machine simulator
 A Turing machine simulator written in Python.
 
-Programs are written as quintuples in the format `current_state`, `current_symbol`, `next_state`, `next_symbol`, `direction`. Delineators are unnecessary (but should be used anyway for readability's sake).
+Programs are represented as sets of quintuples in the format `current_state`, `current_symbol`, `next_state`, `next_symbol`, `head_direction`. Delineators are unnecessary (but should be used anyway for readability's sake).
 
 A sample palindrome detector program is provided. Its minifed version is also provided to demonstrate that delineators aren't necessary for the program's functioning.
 
