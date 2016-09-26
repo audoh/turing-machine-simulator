@@ -149,11 +149,14 @@ class TuringMachine:
 
 		if self.state == 0:
 			self.print_state(False, True)
+			
+			print('')
+
+			# Live display mode needs an extra linebreak
+			# on finishing
 
 			if self.live:
-				print()
-
-			print('')
+				print('')
 
 			self.print_stepc()
 			self.print_head_moves()
@@ -163,20 +166,27 @@ class TuringMachine:
 		else:
 			self.print_state(True)
 
-	def print_state(self, show_pointer = False, silent_override = False):
+	def print_state(self, show_head = False, silent_override = False):
 		"""
 		Prints info about the current state.
 		"""
 
+		# Silence override provided for 'essential' info
+
 		if self.silent and not silent_override:
 			return False
 
-		overwrite = self.live
+		# Convert tape to string and insert head symbol
 
 		tape_string = ''.join(self.tape)
-		out = tape_string if not show_pointer else tape_string[:self.head] + '|' + tape_string[self.head:]
+		out = tape_string if not show_head else tape_string[:self.head] + '|' + tape_string[self.head:]
 
-		end = '\r' if overwrite else '\n'
+		# Uses carriage-return character for overwriting
+		# the previous state when in live display mode
+
+		end = '\r' if self.live else '\n'
+
+		# Prepare format string
 
 		formatstr = "{stepc} ({state}): {out}"
 
@@ -184,6 +194,8 @@ class TuringMachine:
 			formatstr += " R: {rule}"
 
 		formatstr += "{end}"
+
+		# Write
 
 		stdout.write(formatstr.format(rule = self.rule, end = end, stepc = self.stepc, state = self.state, out=out))
 
@@ -236,7 +248,7 @@ def _read_rules(file):
 
 def _parse_args():
 	"""
-	Parses args when run as __main__.
+	For parsing args when run as __main__.
 	"""
 
 	parser = ArgumentParser(description='Simulates the action of a Turing Machine.')
@@ -283,7 +295,7 @@ if __name__ == "__main__":
 	if argv['stepping_mode'] and not argv['silent']:
 		while 1:
 			turing.step()
-			
+
 			if turing.state != 0:
 				x = keypress()
 
