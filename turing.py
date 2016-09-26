@@ -124,7 +124,7 @@ class TuringMachine:
 
 		# Print state
 
-		self.step_print(self.state == 0)
+		self.step_print(self.state == 0, self.state == 0)
 
 	def run(self):
 		"""
@@ -142,13 +142,13 @@ class TuringMachine:
 
 	# Print functions
 
-	def step_print(self, verbose = False):
+	def step_print(self, verbose = False, silent_override = False):
 		"""
 		Prints info about the current step.
 		"""
 
 		if verbose:
-			self.print_state(False, True)
+			self.print_state(False, silent_override)
 
 			print('')
 
@@ -164,7 +164,7 @@ class TuringMachine:
 			if self.display_path:
 				self.print_path()
 		else:
-			self.print_state(True)
+			self.print_state(True, silent_override)
 
 	def print_state(self, show_head = False, silent_override = False):
 		"""
