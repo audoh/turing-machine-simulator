@@ -17,7 +17,6 @@ class TapeRunoff(Exception):
 # Half-tape Turing Machine
 
 class TuringMachine:
-
 	# Configuration
 
 	display_rules = False
@@ -28,7 +27,7 @@ class TuringMachine:
 
 	live = False
 
-	# State variables
+	# State
 
 	state = 1
 	head = 0
@@ -87,14 +86,18 @@ class TuringMachine:
 
 		replace = [self.rule[3]] if self.rule[3] != '*' else scan
 		self.string = self.string[:self.head] + replace + self.string[self.head + 1:]
+
 		# Update Turing state
+		
+		head_direction = int(self.rule[4])
 
 		self.state = int(self.rule[2])
-		self.head += int(self.rule[4])
-		self.path.append(self.state)
+		self.head += head_direction
 
-		if self.head:
+		if head_direction:
 			self.head_moves += 1
+
+		self.path.append(self.state)
 
 		# Check head is still within the tape
 
