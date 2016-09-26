@@ -32,7 +32,7 @@ class TuringMachine:
 	state = 1
 	head = 0
 	rule = None
-	string = ''
+	tape = ''
 
 	# Tracking
 
@@ -66,7 +66,7 @@ class TuringMachine:
 		raise RuleNotFound(state, scan)
 
 	def input(self, input):
-		self.string = list(input)
+		self.tape = list(input)
 
 		self.reset()
 
@@ -76,19 +76,19 @@ class TuringMachine:
 		# Add empty spaces to array when
 		# pointer moves beyond right edge
 
-		if self.head == len(self.string):
-			self.string.extend('_')
+		if self.head == len(self.tape):
+			self.tape.extend('_')
 
-		scan = self.string[self.head]
+		scan = self.tape[self.head]
 		self.rule = self.find_rule(self.state, scan)
 
 		# Replace character as per rule
 
 		replace = [self.rule[3]] if self.rule[3] != '*' else scan
-		self.string = self.string[:self.head] + replace + self.string[self.head + 1:]
+		self.tape = self.tape[:self.head] + replace + self.tape[self.head + 1:]
 
 		# Update Turing state
-		
+
 		head_direction = int(self.rule[4])
 
 		self.state = int(self.rule[2])
@@ -115,7 +115,7 @@ class TuringMachine:
 			if not self.silent:
 				sleep(self.step_time)
 			
-		return self.string
+		return self.tape
 
 	# Print functions
 
@@ -142,7 +142,7 @@ class TuringMachine:
 
 		overwrite = self.live
 
-		string = ''.join(self.string)
+		string = ''.join(self.tape)
 		out = string if not show_pointer else string[:self.head] + '|' + string[self.head:]
 
 		end = '\r' if overwrite else '\n'
