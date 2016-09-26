@@ -158,13 +158,20 @@ class TuringMachine:
 			if self.live:
 				print('')
 
-			self.print_stepc()
-			self.print_head_moves()
-
-			if self.display_path:
-				self.print_path()
+			self.print_tracking()
 		else:
 			self.print_state(True, silent_override)
+
+	def print_tracking(self):
+		"""
+		Prints tracking info so far.
+		"""
+
+		self.print_stepc()
+		self.print_head_moves()
+
+		if self.display_path:
+			self.print_path()
 
 	def print_state(self, show_head = False, silent_override = False):
 		"""
@@ -299,10 +306,11 @@ if __name__ == "__main__":
 			if turing.state != 0:
 				x = keypress()
 
-				# Interrupt on Ctrl+C
-
-				if ord(x) == 3:
+				if ord(x) == 3:	# Interrupt on Ctrl+C
 					raise KeyboardInterrupt
+				elif x == 'i' and not argv['live']:	# Show current info so far
+					turing.print_tracking()
+
 			else:
 				break
 	else:
