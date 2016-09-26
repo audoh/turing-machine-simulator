@@ -122,9 +122,9 @@ class TuringMachine:
 		if self.head < 0:
 			raise TapeRunoff
 
-		# Print state		
+		# Print state
 
-		self.step_print()
+		self.step_print(self.state == 0)
 
 	def run(self):
 		"""
@@ -142,14 +142,14 @@ class TuringMachine:
 
 	# Print functions
 
-	def step_print(self):
+	def step_print(self, verbose = False):
 		"""
 		Prints info about the current step.
 		"""
 
-		if self.state == 0:
+		if verbose:
 			self.print_state(False, True)
-			
+
 			print('')
 
 			# Live display mode needs an extra linebreak
