@@ -301,8 +301,6 @@ if __name__ == "__main__":
 
 	if argv['stepping_mode'] and not argv['silent']:
 		while 1:
-			turing.step()
-
 			if turing.state != 0:
 				x = keypress()
 
@@ -311,6 +309,7 @@ if __name__ == "__main__":
 				elif x == 'i' and not argv['live']:	# Show current info so far
 					turing.print_tracking()
 
+				turing.step()
 			else:
 				break
 	else:
