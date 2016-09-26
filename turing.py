@@ -87,7 +87,6 @@ class TuringMachine:
 
 		replace = [self.rule[3]] if self.rule[3] != '*' else scan
 		self.string = self.string[:self.head] + replace + self.string[self.head + 1:]
-
 		# Update Turing state
 
 		self.state = int(self.rule[2])
@@ -165,21 +164,21 @@ class TuringMachine:
 
 def read_rules(file):
 	rules = []
-	num_buf = []
 
-	neg = '';
+	tup_buf = []
+	sym_buf = ''
 
 	for line in file:
 		for char in line:
-			if char == '-':
-				neg = '-'
-			elif match("[\w]", char):
-				num_buf.append(neg + char)
-				neg = ''
+			if match("[-\w]", char):
+				sym_buf += char
+			elif sym_buf:
+				tup_buf.append(sym_buf)
+				sym_buf = ''
 
-				if len(num_buf) == 5:
-					rules.append(tuple(num_buf))
-					num_buf = []
+				if len(tup_buf) == 5:
+					rules.append(tuple(tup_buf))
+					tup_buf = []
 
 	return rules
 
