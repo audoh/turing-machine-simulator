@@ -215,8 +215,14 @@ if __name__ == "__main__":
 	turing.input(argv['input'])
 
 	if argv['stepping_mode'] and not argv['silent']:
-		while(turing.state != 0):
+		while 1:
 			turing.step()
-			keypress()
+			if turing.state != 0:
+				x = keypress()
+
+				if ord(x) == 3:
+					raise KeyboardInterrupt
+			else:
+				break
 	else:
 		output = turing.run()
