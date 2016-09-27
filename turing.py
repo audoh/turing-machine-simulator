@@ -11,6 +11,12 @@ class RuleNotFound(Exception):
 	def __str__(self):
 		return repr("No rule found from state {0[0]} with char {0[1]}.".format(self.value))
 
+class IncorrectSymbolCount(Exception):
+	def __init__(self, count):
+		self.count = count
+	def __str__(self):
+		return repr("Incorrect number of rule symbols (must be a multiple of 5, is {count}).".format(count=self.count))
+
 class TapeBlank(Exception):
 	def __str__(self):
 		return repr("The input tape is blank.")
@@ -292,12 +298,14 @@ def _read_rules(file):
 	sym_buf = ''
 	cfg_buf = ''
 
+	symc = 0
+
 	state = 'std'
 
 	eof = False
 
 	def state_reader():
-		nonlocal state, cfg_buf, sym_buf, tup_buf, cfg, rules, eof
+		nonlocal state, cfg_buf, sym_buf, symc, tup_buf, cfg, rules, eof
 		
 		if state == 'std':
 			if match("[-\w\*]", char) and not eof:
@@ -322,6 +330,7 @@ def _read_rules(file):
 
 				tup_buf.append(sym_buf)
 				sym_buf = ''
+				symc += 1
 
 				# Once 5 symbols found, add tuple to rules
 				# and clear tuple buffer.
@@ -357,7 +366,6 @@ def _read_rules(file):
 			if char == '\n':
 				state = 'std'
 
-
 	for line in file:
 		for char in line:
 			state_reader()
@@ -365,6 +373,9 @@ def _read_rules(file):
 	eof = True
 	
 	state_reader()
+
+	if symc % 5:
+		raise IncorrectSymbolCount(symc)
 
 	return (rules, cfg)
 
