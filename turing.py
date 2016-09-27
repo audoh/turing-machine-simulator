@@ -14,9 +14,36 @@ class TapeRunoff(Exception):
 	def __str__(self):
 		return repr("Attempted to run off the left-side of the tape.")
 
-# Half-tape Turing Machine
-
 class TuringMachine:
+	'''
+	A half-tape Turing machine.
+
+	To set the rules for the machine,
+	pass them as an array of 5-tuples
+	to the `rules` attribute. The format
+	of the 5-tuples is as follows:
+
+		current_state, current_symbol, next_state, next_symbol, head_direction
+
+	To execute the program, first set the
+	input tape using the `input(string)`
+	method. Then use `run()` for
+	automatic execution, or `step()` to
+	progress to the next step.
+
+	The following attributes are
+	available for configuration:
+
+		display_rules   - display the current rule alongside the current state.
+		display_path    - display the path of states at the end.
+		step_time       - the time between automatic steps when using `run()`.
+
+		silent       	- skip showing intermediate steps.
+		verbose			- show extra information at each step.
+
+		live            - show the state as a live display on a single line.
+	'''
+
 	# Configuration
 
 	display_rules = False
@@ -33,7 +60,21 @@ class TuringMachine:
 	state = 1
 	head = 0
 	rule = None
-	tape = ''
+	_tape = ''
+
+	@property
+	def tape(self):
+		return self._tape
+
+	@tape.setter
+	def tape(self, value):
+		"""
+		Feeds input tape to the Turing machine.
+		"""
+
+		self._tape = list(value)
+
+		self.reset()
 
 	# Tracking
 
@@ -76,15 +117,6 @@ class TuringMachine:
 
 		raise RuleNotFound(state, scan)
 
-	def input(self, input):
-		"""
-		Feeds input tape to the Turing machine.
-		"""
-
-		self.tape = list(input)
-
-		self.reset()
-
 	def step(self):
 		"""
 		Progresses the Turing machine state.
@@ -95,19 +127,19 @@ class TuringMachine:
 		# Add empty spaces to array when
 		# pointer moves beyond right edge
 
-		if self.head == len(self.tape):
-			self.tape.extend('_')
+		if self.head == len(self._tape):
+			self._tape.extend('_')
 
-		scan = self.tape[self.head]
+		scan = self._tape[self.head]
 		self.rule = self.find_rule(self.state, scan)
 
 		# Replace character as per rule
 
 		replace = [self.rule[3]] if self.rule[3] != '*' else scan
-		self.tape = self.tape[:self.head] + replace + self.tape[self.head + 1:]
+		self._tape = self._tape[:self.head] + replace + self._tape[self.head + 1:]
 
 		# Update Turing state
-
+		
 		head_direction = int(self.rule[4])
 
 		self.state = int(self.rule[2])
@@ -139,7 +171,7 @@ class TuringMachine:
 			if not self.silent:
 				sleep(self.step_time)
 			
-		return self.tape
+		return self._tape
 
 	# Print functions
 
@@ -185,7 +217,7 @@ class TuringMachine:
 
 		# Convert tape to string and insert head symbol
 
-		tape_string = ''.join(self.tape).replace('_', ' ')
+		tape_string = ''.join(self._tape).replace('_', ' ')
 		out = tape_string + ' ' if not show_head else tape_string[:self.head] + '|' + tape_string[self.head:]
 
 		# Uses carriage-return character for overwriting
@@ -300,7 +332,7 @@ if __name__ == "__main__":
 
 	# Input
 
-	turing.input(argv['input'])
+	turing.tape = argv['input']
 
 	# Execute
 
