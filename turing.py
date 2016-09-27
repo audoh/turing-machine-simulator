@@ -265,21 +265,40 @@ def _read_rules(file):
 	"""
 
 	rules = []
+	cfg = {}
 
 	tup_buf = []
 	sym_buf = ''
+	cfg_buf = ''
+
+	mode = 'std'
+	
 
 	for line in file:
 		for char in line:
 			if match("[-\w]", char):
 				sym_buf += char
 			elif sym_buf:
-				tup_buf.append(sym_buf)
-				sym_buf = ''
+				if char == ':':
+					mode = 'cfg'
 
-				if len(tup_buf) == 5:
-					rules.append(tuple(tup_buf))
-					tup_buf = []
+					cfg_buf = sym_buf.lower()
+					sym_buf = ''
+				elif mode == 'cfg':
+					if char == '\n':
+						mode = 'std'
+
+						cfg[cfg_buf] = sym_buf
+						cfg_buf = ''
+
+						sym_buf = ''
+				else:
+					tup_buf.append(sym_buf)
+					sym_buf = ''
+
+					if len(tup_buf) == 5:
+						rules.append(tuple(tup_buf))
+						tup_buf = []
 
 	tup_buf.append(sym_buf)
 	sym_buf = ''
@@ -288,7 +307,7 @@ def _read_rules(file):
 		rules.append(tuple(tup_buf))
 		tup_buf = []
 
-	return rules
+	return (rules, cfg)
 
 def _parse_args():
 	"""
@@ -322,7 +341,13 @@ if __name__ == "__main__":
 
 	with open(argv['path'], 'r') as f:
 		rules = _read_rules(f)
-		turing = TuringMachine(rules)
+		turing = TuringMachine(rules[0])
+		
+		if rules[1]['init']:
+			turing.STATE_INIT = rules[1]['init']
+
+		if rules[1]['halt']:
+			turing.STATE_HALT = rules[1]['halt']
 
 	# Configure
 
