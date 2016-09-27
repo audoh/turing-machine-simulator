@@ -430,7 +430,7 @@ if __name__ == "__main__":
 
 			turing.step()
 			
-			if turing.state == turing.HALT_STATE:
+			if turing.state == turing.STATE_HALT:
 				break
 	else:
 		output = turing.run()
