@@ -276,6 +276,13 @@ def _read_rules(file):
 					rules.append(tuple(tup_buf))
 					tup_buf = []
 
+	tup_buf.append(sym_buf)
+	sym_buf = ''
+
+	if len(tup_buf) == 5:
+		rules.append(tuple(tup_buf))
+		tup_buf = []
+
 	return rules
 
 def _parse_args():
