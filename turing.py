@@ -11,6 +11,10 @@ class RuleNotFound(Exception):
 	def __str__(self):
 		return repr("No rule found from state {0[0]} with char {0[1]}.".format(self.value))
 
+class TapeBlank(Exception):
+	def __str__(self):
+		return repr("The input tape is blank.")
+
 class TuringMachine:
 	'''
 	A full-tape Turing machine.
@@ -126,6 +130,9 @@ class TuringMachine:
 		"""
 		Progresses the Turing machine state.
 		"""
+
+		if not self._tape:
+			raise TapeBlank
 
 		self.stepc += 1
 
@@ -274,7 +281,8 @@ def _read_rules(file):
 	"""
 	Given an open file `file`, reads rules
 	into 5-tuples separated by some
-	non-word-character delineator.
+	non-alphanumeric, non-underscore
+	delineator.
 	"""
 
 	rules = []
@@ -292,7 +300,7 @@ def _read_rules(file):
 		nonlocal state, cfg_buf, sym_buf, tup_buf, cfg, rules, eof
 		
 		if state == 'std':
-			if match("[-\w]", char) and not eof:
+			if match("[-\w\*]", char) and not eof:
 				# Read into symbol buffer.
 
 				sym_buf += char
@@ -381,7 +389,22 @@ def _parse_args():
 	parser.add_argument('--live', action='store_true', help="Displays a single, continuously changing state representation")
 
 	parser.add_argument('-s', action='store_true', dest='stepping_mode', help="Enables stepping mode, in which you press a key to progress to each further step.")
+	parser.add_argument('-l', action='store_true', dest='loop_mode', help="Enables loop mode. The program will continually prompt for further input after each run.")
 	return parser.parse_args()
+
+def _stepping_mode(turing):
+	while 1:
+		x = keypress()
+
+		if ord(x) == 3:	# Interrupt on Ctrl+C
+			raise KeyboardInterrupt
+		elif x == 'i':	# Show current info so far
+			turing.verbose = not turing.verbose
+
+		turing.step()
+		
+		if turing.state == turing.STATE_HALT:
+			break
 
 if __name__ == "__main__":
 	# Parse
@@ -400,9 +423,6 @@ if __name__ == "__main__":
 		if 'halt' in rules[1]:
 			turing.STATE_HALT = rules[1]['halt']
 
-		if 'wildcard' in rules[1]:
-			turing.WILDCARD = rules[1]['wildcard']
-
 	# Configure
 
 	turing.display_rules = argv['rules']
@@ -415,22 +435,22 @@ if __name__ == "__main__":
 
 	# Input
 
-	turing.tape = argv['input']
+	loop = True
+	tape = argv['input']
 
-	# Execute
+	while loop:
+		if not tape:
+			tape = input("\nInput additional tape.\n")
+			print('')
 
-	if argv['stepping_mode'] and not argv['silent']:
-		while 1:
-			x = keypress()
+		turing.tape = tape
 
-			if ord(x) == 3:	# Interrupt on Ctrl+C
-				raise KeyboardInterrupt
-			elif x == 'i':	# Show current info so far
-				turing.verbose = not turing.verbose
+		# Execute
 
-			turing.step()
-			
-			if turing.state == turing.STATE_HALT:
-				break
-	else:
-		output = turing.run()
+		if argv['stepping_mode'] and not argv['silent']:
+			_stepping_mode(turing)
+		else:
+			output = turing.run()
+
+		tape = ''
+		loop = argv['loop_mode']

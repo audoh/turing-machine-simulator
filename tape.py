@@ -62,3 +62,6 @@ class Tape:
 			self._left[index] = value
 		else:
 			self._right[index] = value
+
+	def __len__(self):
+		return len(self._left) + len(self._right)
