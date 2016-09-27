@@ -185,8 +185,8 @@ class TuringMachine:
 
 		# Convert tape to string and insert head symbol
 
-		tape_string = ''.join(self.tape)
-		out = tape_string if not show_head else tape_string[:self.head] + '|' + tape_string[self.head:]
+		tape_string = ''.join(self.tape).replace('_', ' ')
+		out = tape_string + ' ' if not show_head else tape_string[:self.head] + '|' + tape_string[self.head:]
 
 		# Uses carriage-return character for overwriting
 		# the previous state when in live display mode
@@ -195,7 +195,7 @@ class TuringMachine:
 
 		# Prepare format string
 
-		formatstr = "{stepc} ({state}): {out}"
+		formatstr = "{stepc} ({state}): >{out}<"
 
 		if self.display_rules:
 			formatstr += " R: {rule}"
