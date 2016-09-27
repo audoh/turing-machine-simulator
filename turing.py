@@ -231,6 +231,8 @@ class TuringMachine:
 
 		formatted = formatstr.format(rule = self.rule, stepc = self.stepc, state = self.state, out=out)
 
+		# Padding to overwrite previous characters when the string shortens
+
 		self.live_stdout_maxlen = len(formatted) if len(formatted) > self.live_stdout_maxlen else self.live_stdout_maxlen		
 		padding = (self.live_stdout_maxlen - len(formatted)) * ' '
 
@@ -288,14 +290,14 @@ def _read_rules(file):
 
 	def state_reader():
 		nonlocal state, cfg_buf, sym_buf, tup_buf, cfg, rules, eof
-
+		
 		if state == 'std':
 			if match("[-\w]", char) and not eof:
 				# Read into symbol buffer.
 
 				sym_buf += char
 
-			elif char == ':':
+			elif char == ':' and not eof:
 				# Store name in buffer variable and reset
 				# symbol variable.
 
@@ -306,10 +308,9 @@ def _read_rules(file):
 
 				state = 'cfg'
 
-			elif sym_buf:
+			elif sym_buf:				
 				# Previous characters were a rule symbol.
 				# Store rule symbol in tuple buffer.
-				# Stay in std state.
 
 				tup_buf.append(sym_buf)
 				sym_buf = ''
@@ -321,17 +322,17 @@ def _read_rules(file):
 					rules.append(tuple(tup_buf))
 					tup_buf = []
 
+			elif char == '#':
+				state = 'cmt'
+
 		if state == 'cfg':
-			if match("[-\w]", char):
+			if match("[-\w]", char) and not eof:
 				# Read into symbol buffer.
 
 				sym_buf += char
 
-			elif sym_buf and (char == '\n' or char == '#'):
+			elif sym_buf:
 				# Previous characters were a config value.
-				# Return to std state.
-
-				state = 'std'
 
 				# Add config key-value pair to cfg
 				# and clear buffers.
@@ -339,6 +340,14 @@ def _read_rules(file):
 				cfg[cfg_buf] = sym_buf
 				cfg_buf = ''
 				sym_buf = ''
+
+				# Move to next state.
+
+				state = 'std'
+
+		elif state == 'cmt':
+			if char == '\n':
+				state = 'std'
 
 
 	for line in file:

@@ -1,8 +1,8 @@
-
-init: 1
+# Comment
+init: 1 # Lol
 halt: 0
 
-1, 1, 2a, _,  1
+1, 1, 2a, _,  1 # Test
 1, 0, 2b, _,  1
 1, _, 0, 1,  0
 
