@@ -373,7 +373,7 @@ def _parse_args():
 	parser.add_argument('--rules', action='store_true', help="Displays the rules alongside the state.")
 
 	parser.add_argument('--step_time', type=float, default=0.250, help="Sets the delay between steps (in seconds). Default is 0.25.")
-	parser.add_argument('--fast', action='store_true', dest='fast', help="Removes the delay between steps (equivalent to --step_time=0).")
+	parser.add_argument('--fast', action='store_const', dest='step_time', const=0, help="Removes the delay between steps (equivalent to --step_time=0).")
 
 	parser.add_argument('--silent', action='store_true', help="Hides intermediate states.")
 	parser.add_argument('--verbose', action='store_true', help="Includes additional information beside each step.")
@@ -406,7 +406,7 @@ if __name__ == "__main__":
 	# Configure
 
 	turing.display_rules = argv['rules']
-	turing.step_time = argv['step_time'] if not argv['fast'] else 0
+	turing.step_time = argv['step_time']
 
 	turing.silent = argv['silent']
 	turing.verbose = argv['verbose']
