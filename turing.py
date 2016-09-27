@@ -26,8 +26,7 @@ class TuringMachine:
 		current_state, current_symbol, next_state, next_symbol, head_direction
 
 	To execute the program, first set the
-	input tape using the `input(string)`
-	method. Then use `run()` for
+	`tape` attribute. Then use `run()` for
 	automatic execution, or `step()` to
 	progress to the next step.
 
@@ -139,7 +138,7 @@ class TuringMachine:
 		self._tape = self._tape[:self.head] + replace + self._tape[self.head + 1:]
 
 		# Update Turing state
-		
+
 		head_direction = int(self.rule[4])
 
 		self.state = int(self.rule[2])
