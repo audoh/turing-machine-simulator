@@ -83,6 +83,10 @@ class TuringMachine:
 	head_moves = 0
 	path = []
 
+	# Stores max length of string in live mode
+
+	live_stdout_maxlen = 0
+
 	def __init__(self, rules):
 		self.rules = rules
 
@@ -225,14 +229,21 @@ class TuringMachine:
 		if self.display_rules:
 			formatstr += " R: {rule}"
 
+		formatted = formatstr.format(rule = self.rule, stepc = self.stepc, state = self.state, out=out)
+
+		self.live_stdout_maxlen = len(formatted) if len(formatted) > self.live_stdout_maxlen else self.live_stdout_maxlen		
+		padding = (self.live_stdout_maxlen - len(formatted)) * ' '
+
 		# Write
 
-		stdout.write(formatstr.format(rule = self.rule, stepc = self.stepc, state = self.state, out=out))
+		stdout.write(formatted)
 
 		if self.verbose:
 			stdout.write(' ')
 			self.print_tracking(False)
 		
+		stdout.write(padding)
+
 		stdout.write(end)
 		stdout.flush()
 
@@ -275,7 +286,7 @@ def _read_rules(file):
 
 	eof = False
 
-	def buffered_reader():
+	def state_reader():
 		nonlocal state, cfg_buf, sym_buf, tup_buf, cfg, rules, eof
 
 		if state == 'std':
@@ -294,6 +305,7 @@ def _read_rules(file):
 				# Enter cfg state.
 
 				state = 'cfg'
+
 			elif sym_buf:
 				# Previous characters were a rule symbol.
 				# Store rule symbol in tuple buffer.
@@ -331,11 +343,11 @@ def _read_rules(file):
 
 	for line in file:
 		for char in line:
-			buffered_reader()
+			state_reader()
 
 	eof = True
 	
-	buffered_reader()
+	state_reader()
 
 	return (rules, cfg)
 
