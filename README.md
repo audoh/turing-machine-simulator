@@ -10,11 +10,8 @@ A simple half-tape Turing machine simulator written in Python.
 A sample palindrome detector program is provided.
 
 ## Features
-- Choose from either continuous run or stepping
-- Choose from line-by-line or live display
-- Set or disable step delay
-- See number of steps, number of head moves and state path
-- While stepping, press 'i' to switch to verbose mode
-
-## Known bugs
-- If the line wraps during live mode, a new line will be created and the program will proceed with the new line.
+- Choose from either continuous run or stepping.
+- Choose from line-by-line or live display.
+- Set or disable step delay.
+- See number of steps, number of head moves and state path.
+- While stepping, press 'i' to switch to verbose mode. Be careful of issue #1.
