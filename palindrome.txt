@@ -1,8 +1,14 @@
-# Comment
-init: 1 # Lol
-halt: 0
+# Palindrome detector
+# Will output a 1 if it's a palindrome and a 0 otherwise.
 
-1, 1, 2a, _,  1 # Test
+# These configuration values aren't required unless you
+# want something other than default.
+
+init: 1
+halt: 0
+wildcard: *
+
+1, 1, 2a, _,  1
 1, 0, 2b, _,  1
 1, _, 0, 1,  0
 

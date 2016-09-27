@@ -326,7 +326,7 @@ def _read_rules(file):
 				state = 'cmt'
 
 		if state == 'cfg':
-			if match("[-\w]", char) and not eof:
+			if match("[^\s\:]", char) and not eof:
 				# Read into symbol buffer.
 
 				sym_buf += char
@@ -394,10 +394,10 @@ if __name__ == "__main__":
 		rules = _read_rules(f)
 		turing = TuringMachine(rules[0])
 		
-		if rules[1]['init']:
+		if 'init' in rules[1]:
 			turing.STATE_INIT = rules[1]['init']
 
-		if rules[1]['halt']:
+		if 'halt' in rules[1]:
 			turing.STATE_HALT = rules[1]['halt']
 
 	# Configure
