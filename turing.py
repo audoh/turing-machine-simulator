@@ -421,16 +421,16 @@ if __name__ == "__main__":
 
 	if argv['stepping_mode'] and not argv['silent']:
 		while 1:
-			if turing.state != 0:
-				x = keypress()
+			x = keypress()
 
-				if ord(x) == 3:	# Interrupt on Ctrl+C
-					raise KeyboardInterrupt
-				elif x == 'i':	# Show current info so far
-					turing.verbose = not turing.verbose
+			if ord(x) == 3:	# Interrupt on Ctrl+C
+				raise KeyboardInterrupt
+			elif x == 'i':	# Show current info so far
+				turing.verbose = not turing.verbose
 
-				turing.step()
-			else:
+			turing.step()
+			
+			if turing.state == turing.HALT_STATE:
 				break
 	else:
 		output = turing.run()
