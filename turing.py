@@ -102,7 +102,7 @@ class TuringMachine:
 
 		self.stepc = 0
 		self.head_moves = 0
-		self.path = ['1']
+		self.path = [self.STATE_INIT]
 
 		self.print_state()
 
