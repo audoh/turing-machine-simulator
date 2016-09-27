@@ -272,40 +272,72 @@ def _read_rules(file):
 	cfg_buf = ''
 
 	mode = 'std'
-	
+
+	def buffer_readout():
+		nonlocal mode, cfg_buf, sym_buf, tup_buf, cfg, rules
+
+		if mode == 'cfg' and char == '\n':
+				# Previous characters were a config value.
+				# Return to std mode.
+
+				mode = 'std'
+
+				# Add config key-value pair to cfg
+				# and clear buffers.
+
+				cfg[cfg_buf] = sym_buf
+				cfg_buf = ''
+				sym_buf = ''
+
+		elif mode == 'std':
+			if char == ':':
+				# Previous characters were a config key.
+				# Enter cfg mode.
+
+				mode = 'cfg'
+
+				# Store name in buffer variable and reset
+				# symbol variable.
+
+				cfg_buf = sym_buf.lower()
+				sym_buf = ''
+
+			else:
+				# Previous characters were a rule symbol.
+				# Store rule symbol in tuple buffer.
+
+				tup_buf.append(sym_buf)
+				sym_buf = ''
+
+				# Once 5 symbols found, add tuple to rules
+				# and clear tuple buffer.
+
+				if len(tup_buf) == 5:
+					rules.append(tuple(tup_buf))
+					tup_buf = []
+
 
 	for line in file:
 		for char in line:
+			# Comments system
+
+			if char == '#' or mode == 'cmt':
+				if char == '#':
+					mode = 'cmt'
+				
+				if char == '\n':
+					mode = 'std'
+				
+				continue
+
 			if match("[-\w]", char):
+				# Read into symbol buffer.
+
 				sym_buf += char
 			elif sym_buf:
-				if char == ':':
-					mode = 'cfg'
-
-					cfg_buf = sym_buf.lower()
-					sym_buf = ''
-				elif mode == 'cfg':
-					if char == '\n':
-						mode = 'std'
-
-						cfg[cfg_buf] = sym_buf
-						cfg_buf = ''
-
-						sym_buf = ''
-				else:
-					tup_buf.append(sym_buf)
-					sym_buf = ''
-
-					if len(tup_buf) == 5:
-						rules.append(tuple(tup_buf))
-						tup_buf = []
-
-	tup_buf.append(sym_buf)
-	sym_buf = ''
-
-	if len(tup_buf) == 5:
-		rules.append(tuple(tup_buf))
-		tup_buf = []
+				buffer_readout()
+	
+	buffer_readout()
 
 	return (rules, cfg)
 

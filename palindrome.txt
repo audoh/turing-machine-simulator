@@ -1,3 +1,6 @@
+# These configuration values can be
+# left out.
+
 init: 1
 halt: 0
 
