@@ -42,6 +42,11 @@ class TuringMachine:
 
 	# Configuration
 
+	STATE_INIT = '1'
+	STATE_HALT = '0'
+
+	WILDCARD = '*'
+
 	display_rules = False
 	display_path = True
 	step_time = 0.25
@@ -53,8 +58,8 @@ class TuringMachine:
 
 	# State
 
-	state = 1
-	head = 0
+	state = STATE_INIT
+	head = STATE_HALT
 	rule = None
 
 	_tape = Tape()
@@ -89,7 +94,7 @@ class TuringMachine:
 
 		# Reset state variables
 
-		self.state = 1
+		self.state = self.STATE_INIT
 		self.head = 0
 		self.rule = None
 
@@ -108,7 +113,7 @@ class TuringMachine:
 		"""
 
 		for r in self.rules:
-			if int(r[0]) == state and (str(r[1]) == scan or str(r[1]) == '*'):
+			if str(r[0]) == state and (str(r[1]) == scan or str(r[1]) == self.WILDCARD):
 				return r
 
 		raise RuleNotFound(state, scan)
@@ -128,14 +133,14 @@ class TuringMachine:
 
 		# Replace character as per rule
 
-		replace = self.rule[3] if self.rule[3] != '*' else scan
+		replace = str(self.rule[3]) if str(self.rule[3]) != self.WILDCARD else scan
 		self._tape[self.head] = replace
 
 		# Update Turing state
 
 		head_direction = int(self.rule[4])
 
-		self.state = int(self.rule[2])
+		self.state = str(self.rule[2])
 		self.head += head_direction
 
 		if head_direction:
@@ -145,7 +150,7 @@ class TuringMachine:
 
 		# Print state
 
-		self.step_print(self.state == 0, self.state == 0)
+		self.step_print(self.state == self.STATE_HALT, self.state == self.STATE_HALT)
 
 	def run(self):
 		"""
@@ -153,7 +158,7 @@ class TuringMachine:
 		every `step_time` seconds until program halt.
 		"""
 
-		while self.state != 0:
+		while self.state != self.STATE_HALT:
 			self.step()
 
 			if not self.silent:
