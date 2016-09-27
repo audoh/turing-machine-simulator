@@ -81,7 +81,7 @@ class Tape:
 
 class TuringMachine:
 	'''
-	A half-tape Turing machine.
+	A full-tape Turing machine.
 
 	To set the rules for the machine,
 	pass them as an array of 5-tuples

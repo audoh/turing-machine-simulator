@@ -1,5 +1,5 @@
 # Turing machine simulator
-A simple half-tape Turing machine simulator written in Python.
+A simple full-tape Turing machine simulator written in Python.
 
 ## Notes on usage
 - Programs are represented as sets of quintuples in the format `current_state`, `current_symbol`, `next_state`, `next_symbol`, `head_direction`.
