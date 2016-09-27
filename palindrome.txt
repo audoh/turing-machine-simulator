@@ -1,6 +1,9 @@
 # Palindrome detector
 # Will output a 1 if it's a palindrome and a 0 otherwise.
 
+# Xa: 1
+# Xb: 0
+
 # These configuration values aren't required unless you
 # want something other than default.
 
