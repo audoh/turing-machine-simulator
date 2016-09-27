@@ -24,6 +24,7 @@ class TuringMachine:
 	step_time = 0.25
 
 	silent = False
+	verbose = False
 
 	live = False
 
@@ -142,18 +143,17 @@ class TuringMachine:
 
 	# Print functions
 
-	def step_print(self, verbose = False, silent_override = False):
+	def step_print(self, end_mode = False, silent_override = False):
 		"""
 		Prints info about the current step.
 		"""
 
-		if verbose:
+		if end_mode:
 			self.print_state(False, silent_override)
 
 			print('')
 
-			# Live display mode needs an extra linebreak
-			# on finishing
+			# Live mode needs an extra blank line
 
 			if self.live:
 				print('')
@@ -162,16 +162,16 @@ class TuringMachine:
 		else:
 			self.print_state(True, silent_override)
 
-	def print_tracking(self):
+	def print_tracking(self, nl = True):
 		"""
 		Prints tracking info so far.
 		"""
 
-		self.print_stepc()
-		self.print_head_moves()
+		self.print_stepc(nl)
+		self.print_head_moves(nl)
 
 		if self.display_path:
-			self.print_path()
+			self.print_path(nl)
 
 	def print_state(self, show_head = False, silent_override = False):
 		"""
@@ -200,32 +200,37 @@ class TuringMachine:
 		if self.display_rules:
 			formatstr += " R: {rule}"
 
-		formatstr += "{end}"
-
 		# Write
 
-		stdout.write(formatstr.format(rule = self.rule, end = end, stepc = self.stepc, state = self.state, out=out))
+		stdout.write(formatstr.format(rule = self.rule, stepc = self.stepc, state = self.state, out=out))
 
-	def print_stepc(self):
+		if self.verbose:
+			stdout.write(' ')
+			self.print_tracking(False)
+		
+		stdout.write(end)
+		stdout.flush()
+
+	def print_stepc(self, nl = True):
 		"""
 		Prints the step count so far.
 		"""
 
-		stdout.write("Steps: {stepc}\n".format(stepc=self.stepc))
+		stdout.write("Steps: {stepc}{end}".format(stepc=self.stepc, end='\n' if nl else ' '))
 
-	def print_head_moves(self):
+	def print_head_moves(self, nl = True):
 		"""
 		Prints the number of head moves so far.
 		"""
 
-		stdout.write("Head moves: {moves}\n".format(moves=self.head_moves))
+		stdout.write("Head moves: {moves}{end}".format(moves=self.head_moves, end='\n' if nl else ' '))
 
-	def print_path(self):
+	def print_path(self, nl = True):
 		"""
 		Prints the state path so far.
 		"""
 
-		stdout.write("State path: {path}\n".format(path=self.path))
+		stdout.write("State path: {path}{end}".format(path=self.path, end='\n' if nl else ' '))
 
 def _read_rules(file):
 	"""
@@ -306,8 +311,8 @@ if __name__ == "__main__":
 
 				if ord(x) == 3:	# Interrupt on Ctrl+C
 					raise KeyboardInterrupt
-				elif x == 'i' and not argv['live']:	# Show current info so far
-					turing.print_tracking()
+				elif x == 'i':	# Show current info so far
+					turing.verbose = not turing.verbose
 
 				turing.step()
 			else:
