@@ -400,6 +400,9 @@ if __name__ == "__main__":
 		if 'halt' in rules[1]:
 			turing.STATE_HALT = rules[1]['halt']
 
+		if 'wildcard' in rules[1]:
+			turing.WILDCARD = rules[1]['wildcard']
+
 	# Configure
 
 	turing.display_rules = argv['rules']
