@@ -1,4 +1,4 @@
-# Turing machine simulator
+# Full-tape Turing machine simulator
 A simple full-tape Turing machine simulator written in Python.
 
 ## Notes on usage
