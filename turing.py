@@ -74,12 +74,6 @@ class Tape:
 		else:
 			self._right[index] = value
 
-t = Tape([1,2,3,4])
-
-t[-2] = 1
-
-print(t)
-
 class TuringMachine:
 	'''
 	A half-tape Turing machine.
