@@ -271,40 +271,33 @@ def _read_rules(file):
 	sym_buf = ''
 	cfg_buf = ''
 
-	mode = 'std'
+	state = 'std'
 
-	def buffer_readout():
-		nonlocal mode, cfg_buf, sym_buf, tup_buf, cfg, rules
+	eof = False
 
-		if mode == 'cfg' and char == '\n':
-				# Previous characters were a config value.
-				# Return to std mode.
+	def buffered_reader():
+		nonlocal state, cfg_buf, sym_buf, tup_buf, cfg, rules, eof
 
-				mode = 'std'
+		if state == 'std':
+			if match("[-\w]", char) and not eof:
+				# Read into symbol buffer.
 
-				# Add config key-value pair to cfg
-				# and clear buffers.
+				sym_buf += char
 
-				cfg[cfg_buf] = sym_buf
-				cfg_buf = ''
-				sym_buf = ''
-
-		elif mode == 'std':
-			if char == ':':
-				# Previous characters were a config key.
-				# Enter cfg mode.
-
-				mode = 'cfg'
-
+			elif char == ':':
 				# Store name in buffer variable and reset
 				# symbol variable.
 
 				cfg_buf = sym_buf.lower()
 				sym_buf = ''
 
-			else:
+				# Enter cfg state.
+
+				state = 'cfg'
+			elif sym_buf:
 				# Previous characters were a rule symbol.
 				# Store rule symbol in tuple buffer.
+				# Stay in std state.
 
 				tup_buf.append(sym_buf)
 				sym_buf = ''
@@ -316,28 +309,33 @@ def _read_rules(file):
 					rules.append(tuple(tup_buf))
 					tup_buf = []
 
-
-	for line in file:
-		for char in line:
-			# Comments system
-
-			if char == '#' or mode == 'cmt':
-				if char == '#':
-					mode = 'cmt'
-				
-				if char == '\n':
-					mode = 'std'
-				
-				continue
-
+		if state == 'cfg':
 			if match("[-\w]", char):
 				# Read into symbol buffer.
 
 				sym_buf += char
-			elif sym_buf:
-				buffer_readout()
+
+			elif sym_buf and (char == '\n' or char == '#'):
+				# Previous characters were a config value.
+				# Return to std state.
+
+				state = 'std'
+
+				# Add config key-value pair to cfg
+				# and clear buffers.
+
+				cfg[cfg_buf] = sym_buf
+				cfg_buf = ''
+				sym_buf = ''
+
+
+	for line in file:
+		for char in line:
+			buffered_reader()
+
+	eof = True
 	
-	buffer_readout()
+	buffered_reader()
 
 	return (rules, cfg)
 
