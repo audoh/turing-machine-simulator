@@ -14,4 +14,4 @@ A sample palindrome detector program is provided.
 - Choose from line-by-line or live display.
 - Set or disable step delay.
 - See number of steps, number of head moves and state path.
-- While stepping, press 'i' to switch to verbose mode. Be careful of issue [#1].
+- While stepping, press 'i' to switch to verbose mode. Be careful of issue [#1](/issues/1).
