@@ -304,7 +304,9 @@ def _parse_args():
 
 	parser.add_argument('--step_time', type=float, default=0.250, help="Sets the delay between steps (in seconds). Default is 0.25.")
 	parser.add_argument('--fast', action='store_true', dest='fast', help="Removes the delay between steps (equivalent to --step_time=0).")
+
 	parser.add_argument('--silent', action='store_true', help="Hides intermediate states.")
+	parser.add_argument('--verbose', action='store_true', help="Includes additional information beside each step.")
 
 	parser.add_argument('--live', action='store_true', help="Displays a single, continuously changing state representation")
 
@@ -328,6 +330,8 @@ if __name__ == "__main__":
 	turing.step_time = argv['step_time'] if not argv['fast'] else 0
 
 	turing.silent = argv['silent']
+	turing.verbose = argv['verbose']
+
 	turing.live = argv['live']
 
 	# Input
