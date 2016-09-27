@@ -3,8 +3,8 @@ A simple Turing machine simulator written in Python.
 
 ## Notes on usage
 - Programs are represented as sets of quintuples in the format `current_state`, `current_symbol`, `next_state`, `next_symbol`, `head_direction`.
-- The start state is always 1.
-- The halt state is always 0.
+- The default start state is 1.
+- The default halt state is 0. 
 - Head direction is an integer where -1 moves left, 0 does nothing and 1 moves right.
 
 A sample palindrome detector program is provided.
