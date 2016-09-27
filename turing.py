@@ -23,7 +23,12 @@ class HalfTape:
 		self._tape = list(array)
 
 	def __str__(self):
-		return str(self._tape)
+		out = ''
+
+		for b in self._tape:
+			out += str(b)
+
+		return out
 
 	def __add__(self, operand):
 		return HalfTape(self._tape + operand._tape)
@@ -53,7 +58,7 @@ class Tape:
 	Tape for a Turing machine.
 	'''
 
-	def __init__(self, array):
+	def __init__(self, array = []):
 		self._right = HalfTape(array)
 		self._left = HalfTape()
 
@@ -120,7 +125,7 @@ class TuringMachine:
 	head = 0
 	rule = None
 
-	_tape = []
+	_tape = Tape()
 
 	@property
 	def tape(self):
@@ -132,8 +137,7 @@ class TuringMachine:
 		Feeds input tape to the Turing machine.
 		"""
 
-		self._tape = list(value)
-
+		self._tape = Tape(value)
 		self.reset()
 
 	# Tracking
@@ -187,16 +191,13 @@ class TuringMachine:
 		# Add empty spaces to array when
 		# pointer moves beyond right edge
 
-		if self.head == len(self._tape):
-			self._tape.extend('_')
-
 		scan = self._tape[self.head]
 		self.rule = self.find_rule(self.state, scan)
 
 		# Replace character as per rule
 
-		replace = [self.rule[3]] if self.rule[3] != '*' else scan
-		self._tape = self._tape[:self.head] + replace + self._tape[self.head + 1:]
+		replace = self.rule[3] if self.rule[3] != '*' else scan
+		self._tape[self.head] = replace
 
 		# Update Turing state
 
@@ -209,11 +210,6 @@ class TuringMachine:
 			self.head_moves += 1
 
 		self.path.append(self.state)
-
-		# Check head is still within the tape
-
-		if self.head < 0:
-			raise TapeRunoff
 
 		# Print state
 
@@ -277,7 +273,7 @@ class TuringMachine:
 
 		# Convert tape to string and insert head symbol
 
-		tape_string = ''.join(self._tape).replace('_', ' ')
+		tape_string = str(self._tape).replace('_', ' ')
 		out = tape_string + ' ' if not show_head else tape_string[:self.head] + '|' + tape_string[self.head:]
 
 		# Uses carriage-return character for overwriting
