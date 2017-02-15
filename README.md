@@ -10,6 +10,7 @@ A simple Turing machine simulator written in Python.
 A sample palindrome detector program is provided.
 
 ## Features
+- Comprehensive code parser, with variables, comments and more.
 - Choose from either continuous run or stepping.
 - Choose from line-by-line or live display.
 - Set or disable step delay.
